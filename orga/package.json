@@ -20,7 +20,9 @@
     "lint:hbs": "ember-template-lint .",
     "scalingo-post-ra-creation": "echo 'nothing to do'",
     "start": "ember serve --proxy",
-    "test": "ember test"
+    "test": "ember test",
+    "build-storybook": "ember build && build-storybook -p 9001 -s dist",
+    "storybook": "ember serve & start-storybook -p 9001 -s dist"
   },
   "devDependencies": {
     "@ember/jquery": "^0.5.2",
@@ -29,6 +31,8 @@
     "@fortawesome/free-brands-svg-icons": "^5.6.3",
     "@fortawesome/free-regular-svg-icons": "^5.6.3",
     "@fortawesome/free-solid-svg-icons": "^5.6.3",
+    "@storybook/ember": "^4.1.12",
+    "babel-loader": "^8.0.5",
     "broccoli-asset-rev": "^2.7.0",
     "ember-ajax": "^3.1.0",
     "ember-cli": "~3.4.2",
@@ -45,6 +49,7 @@
     "ember-cli-qunit": "^4.3.2",
     "ember-cli-sass": "^7.2.0",
     "ember-cli-sri": "^2.1.1",
+    "ember-cli-storybook": "^0.1.0",
     "ember-cli-template-lint": "^1.0.0-beta.1",
     "ember-cli-uglify": "^2.1.0",
     "ember-data": "~3.4.0",
