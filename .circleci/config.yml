@@ -64,29 +64,30 @@ workflows:
           requires:
             - checkout
 
-      - mon_pix_build_and_test:
+      - ember_build:
+          directory: mon-pix
+          parallelism: 3
           requires:
             - checkout
 
-      - orga_build_and_test:
+      - ember_build:
+          directory: orga
           requires:
             - checkout
 
-      - certif_build_and_test:
+      - ember_build:
+          directory: certif
           requires:
             - checkout
 
-      - admin_build_and_test:
+      - ember_build:
+          directory: admin
           requires:
             - checkout
 
       - signal_ci_ok:
           requires:
-            - api_build_and_test
-            - mon_pix_build_and_test
-            - orga_build_and_test
-            - certif_build_and_test
-            - admin_build_and_test
+            - ember_build
           filters:
             branches:
               ignore:
@@ -128,45 +129,17 @@ jobs:
             TEST_DATABASE_URL: postgres://circleci@localhost:5432/circleci
             NODE_ENV: test
 
-  mon_pix_build_and_test:
+  ember_build:
+    parameters:
+      directory:
+        type: string
     executor: ember-executor
-    working_directory: ~/pix/mon-pix
-    parallelism: 3
+    working_directory: ~/pix/<< parameters.directory >>
     steps:
       - attach_workspace:
           at: ~/pix
       - npm_ci:
-          cache_key: mon-pix
-      - run: npm test
-
-  orga_build_and_test:
-    executor: ember-executor
-    working_directory: ~/pix/orga
-    steps:
-      - attach_workspace:
-          at: ~/pix
-      - npm_ci:
-          cache_key: orga
-      - run: npm test
-
-  certif_build_and_test:
-    executor: ember-executor
-    working_directory: ~/pix/certif
-    steps:
-      - attach_workspace:
-          at: ~/pix
-      - npm_ci:
-          cache_key: certif
-      - run: npm test
-
-  admin_build_and_test:
-    executor: ember-executor
-    working_directory: ~/pix/admin
-    steps:
-      - attach_workspace:
-          at: ~/pix
-      - npm_ci:
-          cache_key: admin
+          cache_key: << parameters.directory >>
       - run: npm test
 
   signal_ci_ok:
