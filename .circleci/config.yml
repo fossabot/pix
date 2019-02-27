@@ -87,7 +87,11 @@ workflows:
 
       - signal_ci_ok:
           requires:
-            - ember_build
+            - api_build_and_test
+            - mon-pix_build_and_test
+            - orga_build_and_test
+            - certif_build_and_test
+            - admin_build_and_test
           filters:
             branches:
               ignore:
@@ -133,6 +137,7 @@ jobs:
     parameters:
       directory:
         type: string
+    name: << parameters.directory >>_build_and_test
     executor: ember-executor
     working_directory: ~/pix/<< parameters.directory >>
     steps:
