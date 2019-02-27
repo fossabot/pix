@@ -37,6 +37,14 @@ commands:
           paths:
             - ~/.npm
 
+executors:
+  ember-executor:
+    docker:
+      - image: circleci/node:10.15-browsers
+        environment:
+          # See https://git.io/vdao3 for details.
+          JOBS: 2
+
 workflows:
   version: 2
   build-test-and-deploy:
@@ -120,11 +128,7 @@ jobs:
             NODE_ENV: test
 
   mon_pix_build_and_test:
-    docker:
-      - image: circleci/node:10.15-browsers
-        environment:
-          # See https://git.io/vdao3 for details.
-          JOBS: 2
+    executor: ember-executor
     working_directory: ~/pix/mon-pix
     parallelism: 3
     steps:
@@ -136,11 +140,7 @@ jobs:
           npx ember exam --split=$CIRCLE_NODE_TOTAL --partition=$((1 + CIRCLE_NODE_INDEX)) --reporter dot
 
   orga_build_and_test:
-    docker:
-      - image: circleci/node:10.15-browsers
-        environment:
-          # See https://git.io/vdao3 for details.
-          JOBS: 2
+    executor: ember-executor
     working_directory: ~/pix/orga
     steps:
       - attach_workspace:
@@ -150,11 +150,7 @@ jobs:
       - run: npm test
 
   certif_build_and_test:
-    docker:
-      - image: circleci/node:10.15-browsers
-        environment:
-          # See https://git.io/vdao3 for details.
-          JOBS: 2
+    executor: ember-executor
     working_directory: ~/pix/certif
     steps:
       - attach_workspace:
@@ -164,11 +160,7 @@ jobs:
       - run: npm test
 
   admin_build_and_test:
-    docker:
-      - image: circleci/node:10.15-browsers
-        environment:
-          # See https://git.io/vdao3 for details.
-          JOBS: 2
+    executor: ember-executor
     working_directory: ~/pix/admin
     steps:
       - attach_workspace:
