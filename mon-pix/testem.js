@@ -21,5 +21,15 @@ module.exports = {
         '--window-size=1440,900'
       ].filter(Boolean)
     }
-  }
+  },
+  ...(process.env.CIRCLECI ?
+      {
+        reporter: 'xunit',
+        report_file: 'test-results/test-results.xml',
+        xunit_intermediate_output: true,
+      }
+      :
+      {
+        reporter: 'dot',
+      })
 };

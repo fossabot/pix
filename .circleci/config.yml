@@ -148,6 +148,8 @@ jobs:
       - npm_ci:
           cache_key: << parameters.directory >>
       - run: npm test
+      - store_test_results:
+          path: test-results
 
   signal_ci_ok:
     docker:

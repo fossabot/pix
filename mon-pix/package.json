@@ -32,7 +32,7 @@
     "preinstall": "test \"$(npm --version)\" = 6.4.1",
     "scalingo-post-ra-creation": "echo 'nothing to do'",
     "start": "ember server --proxy",
-    "test": "if [ -n \"$CIRCLE_NODE_TOTAL\" ]; then ember exam --split=$CIRCLE_NODE_TOTAL --partition=$((1 + CIRCLE_NODE_INDEX)) --reporter dot; else ember test --reporter dot; fi",
+    "test": "if [ -n \"$CIRCLECI\" ]; then ember exam --silent --split=$CIRCLE_NODE_TOTAL --partition=$((1 + CIRCLE_NODE_INDEX)); else ember test; fi",
     "test:lint": "npm test && npm run lint",
     "test:watch": "ember exam --serve --reporter dot"
   },
