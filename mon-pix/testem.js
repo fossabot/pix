@@ -25,7 +25,7 @@ module.exports = {
   ...(process.env.CIRCLECI ?
       {
         reporter: 'xunit',
-        report_file: 'test-results/test-results.xml',
+        report_file: 'test-results/testem/test-results.xml',
         xunit_intermediate_output: true,
       }
       :
