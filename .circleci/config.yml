@@ -30,8 +30,7 @@ commands:
     steps:
       - run: cat package*.json > cachekey
       - restore_cache:
-          keys:
-            - v7-<< parameters.cache_key >>-npm-{{ checksum "cachekey" }}
+          key: v7-<< parameters.cache_key >>-npm-{{ checksum "cachekey" }}
       - run: npm ci
       - save_cache:
           key: v7-<< parameters.cache_key >>-npm-{{ checksum "cachekey" }}
