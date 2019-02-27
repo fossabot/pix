@@ -65,22 +65,26 @@ workflows:
             - checkout
 
       - ember_build:
+          name: mon-pix_build_and_test
           directory: mon-pix
           parallelism: 3
           requires:
             - checkout
 
       - ember_build:
+          name: orga_build_and_test
           directory: orga
           requires:
             - checkout
 
       - ember_build:
+          name: certif_build_and_test
           directory: certif
           requires:
             - checkout
 
       - ember_build:
+          name: admin_build_and_test
           directory: admin
           requires:
             - checkout
@@ -137,9 +141,12 @@ jobs:
     parameters:
       directory:
         type: string
-    name: << parameters.directory >>_build_and_test
+      parallelism:
+        type: integer
+        default: 1
     executor: ember-executor
     working_directory: ~/pix/<< parameters.directory >>
+    parallelism: << parameters.parallelism >>
     steps:
       - attach_workspace:
           at: ~/pix
