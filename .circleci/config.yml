@@ -19,7 +19,23 @@
 # - for data that is specific to a build (commit), like the source code downloaded from github,
 #   we use Circle CI's workspace feature to transport it between jobs.
 
-version: 2.0
+version: 2.1
+
+commands:
+  npm_ci:
+    description: "Run 'npm ci' with cache"
+    parameters:
+      cache_key:
+        type: string
+    steps:
+      - restore_cache:
+          keys:
+            - v7-<< parameters.cache_key >>-npm-{{ checksum "cachekey" }}
+      - run: npm ci
+      - save_cache:
+          key: v7-<< parameters.cache_key >>-npm-{{ checksum "cachekey" }}
+          paths:
+            - ~/.npm
 
 workflows:
   version: 2
@@ -90,15 +106,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/pix
-      - run: cat package*.json > cachekey
-      - restore_cache:
-          keys:
-            - v7-api-npm-{{ checksum "cachekey" }}
-      - run: npm ci
-      - save_cache:
-          key: v7-api-npm-{{ checksum "cachekey" }}
-          paths:
-            - ~/.npm
+      - npm_ci:
+          cache_key: api
       - run: |
           npm run lint
           npm test
@@ -121,15 +130,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/pix
-      - run: cat package*.json > cachekey
-      - restore_cache:
-          keys:
-            - v7-mon-pix-npm-{{ checksum "cachekey" }}
-      - run: npm ci
-      - save_cache:
-          key: v7-mon-pix-npm-{{ checksum "cachekey" }}
-          paths:
-            - ~/.npm
+      - npm_ci:
+          cache_key: mon-pix
       - run: |
           npx ember exam --split=$CIRCLE_NODE_TOTAL --partition=$((1 + CIRCLE_NODE_INDEX)) --reporter dot
 
@@ -143,15 +145,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/pix
-      - run: cat package*.json > cachekey
-      - restore_cache:
-          keys:
-            - v7-orga-npm-{{ checksum "cachekey" }}
-      - run: npm ci
-      - save_cache:
-          key: v7-orga-npm-{{ checksum "cachekey" }}
-          paths:
-            - ~/.npm
+      - npm_ci:
+          cache_key: orga
       - run: npm test
 
   certif_build_and_test:
@@ -164,15 +159,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/pix
-      - run: cat package*.json > cachekey
-      - restore_cache:
-          keys:
-            - v7-certif-npm-{{ checksum "cachekey" }}
-      - run: npm ci
-      - save_cache:
-          key: v7-certif-npm-{{ checksum "cachekey" }}
-          paths:
-            - ~/.npm
+      - npm_ci:
+          cache_key: certif
       - run: npm test
 
   admin_build_and_test:
@@ -185,15 +173,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/pix
-      - run: cat package*.json > cachekey
-      - restore_cache:
-          keys:
-            - v7-admin-npm-{{ checksum "cachekey" }}
-      - run: npm ci
-      - save_cache:
-          key: v7-admin-npm-{{ checksum "cachekey" }}
-          paths:
-            - ~/.npm
+      - npm_ci:
+          cache_key: admin
       - run: npm test
 
   signal_ci_ok:
@@ -203,15 +184,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/pix
-      - run: cat package*.json > cachekey
-      - restore_cache:
-          keys:
-            - v7-root-npm-{{ checksum "cachekey" }}
-      - run: npm ci
-      - save_cache:
-          key: v7-root-npm-{{ checksum "cachekey" }}
-          paths:
-            - ~/.npm
+      - npm_ci:
+          cache_key: root
       - run: sudo apt-get install -y jq
       - run: npm run ci:signal-jira
       - run: ~/pix/scripts/signal_deploy_to_pr.sh
