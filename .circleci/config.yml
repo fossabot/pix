@@ -28,6 +28,7 @@ commands:
       cache_key:
         type: string
     steps:
+      - run: cat package*.json > cachekey
       - restore_cache:
           keys:
             - v7-<< parameters.cache_key >>-npm-{{ checksum "cachekey" }}
