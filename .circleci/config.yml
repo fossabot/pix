@@ -137,8 +137,7 @@ jobs:
           at: ~/pix
       - npm_ci:
           cache_key: mon-pix
-      - run: |
-          npx ember exam --split=$CIRCLE_NODE_TOTAL --partition=$((1 + CIRCLE_NODE_INDEX)) --reporter dot
+      - run: npm test
 
   orga_build_and_test:
     executor: ember-executor
