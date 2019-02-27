@@ -150,6 +150,8 @@ jobs:
       - run: npm test
       - store_test_results:
           path: test-results
+      - store_artifacts:
+          path: test-results
 
   signal_ci_ok:
     docker:
