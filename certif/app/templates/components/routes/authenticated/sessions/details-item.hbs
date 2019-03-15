@@ -84,3 +84,46 @@
   </div>
 
 </div>
+
+<div class="panel panel--strong-shadow session-details-container">
+
+  <div class="session-details-candidates">
+    <div class="session-details-content">
+      {{textarea id='import'
+                 name='import'
+                 rows=8
+                 value=data
+                 class="textarea"
+                 keyUp=(action "preview" data)
+      }}
+    </div>
+    {{#if candidates}}
+      <div class="table content-text content-text--small">
+        <table>
+          <thead>
+          <tr>
+            <th class="table__column">Nom</th>
+            <th class="table__column">Prénom</th>
+            <th class="table__column">Date de naissance</th>
+            <th class="table__column">Lieu de naissance</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          {{#each candidates as |candidate|}}
+            <tr>
+              <td>{{candidate.lastName}}</td>
+              <td>{{candidate.firstName}}</td>
+              <td>{{moment-format candidate.birthdate 'DD/MM/YYYY' allow-empty=true}}</td>
+              <td>{{candidate.birthplace}}</td>
+            </tr>
+          {{/each}}
+          </tbody>
+        </table>
+      </div>
+    {{/if}}
+
+  </div>
+  <button {{action 'import' data}} class="button button--regular">Importer</button>
+
+</div>
