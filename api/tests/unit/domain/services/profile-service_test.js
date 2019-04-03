@@ -130,7 +130,6 @@ describe('Unit | Service | Profil User Service', function() {
               status: 'notAssessed',
               isRetryable: false,
             }],
-          usesProfileV2: false,
           areas: fakeAreaRecords,
           organizations: fakeOrganizationsRecords
         };
@@ -148,7 +147,6 @@ describe('Unit | Service | Profil User Service', function() {
         // given
         const expectedUser = {
           user: fakeUserRecord,
-          usesProfileV2: false,
           competences: [
             {
               id: 'competenceId1',
