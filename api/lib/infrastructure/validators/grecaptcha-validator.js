@@ -7,6 +7,10 @@ module.exports = {
 
   verify(responseToken) {
     return new Promise((resolve, reject) => {
+      if (!config.googleReCaptcha.enabled) {
+        return resolve();
+      }
+
       request.post(`https://www.google.com/recaptcha/api/siteverify?secret=${config.googleReCaptcha.secret}&response=${responseToken}`, (err, response) => {
         if (err) {
           logger.error(err);

@@ -1,0 +1,79 @@
+config:
+  phases:
+    - duration: 10
+      arrivalRate: 10
+  environments:
+    localhost:
+      target: http://localhost:3000
+    scalingo:
+      target: https://memory-leak.scalingo.io
+
+scenarios:
+  - name: 'Test de démo'
+    flow:
+      - get:
+          url: "/api/courses/rec8rnpOgmfZyd2Ng"
+      - post:
+          url: "/api/assessments"
+          json:
+            data:
+              attributes:
+                certification-number:
+                estimated-level:
+                pix-score:
+                type: DEMO
+                state:
+                code-campaign:
+                participant-external-id:
+              relationships:
+                course:
+                  data:
+                    type: courses
+                    id: rec8rnpOgmfZyd2Ng
+              type: assessments
+          capture:
+            json: "$.data.id"
+            as: "assessmentId"
+
+      # Load next page
+      - get:
+          url: "/api/assessments/{{ assessmentId }}"
+      - get:
+          url: "/api/assessments/{{ assessmentId }}/next"
+          capture:
+            json: "$.data.id"
+            as: "challengeId"
+      - get:
+          url: "/api/challenges/{{ challengeId }}"
+      - get:
+          url: "/api/answers?assessment={{ assessmentId }}&challenge={{ challengeId }}"
+
+      # Submit answer
+      - post:
+          url: "/api/answers"
+          json:
+            data:
+              attributes:
+                value: '1961'
+                elapsed-time: 1150
+              relationships:
+                assessment:
+                  data:
+                    type: assessments
+                    id: "{{ assessmentId }}"
+                challenge:
+                  data:
+                    type: challenges
+                    id: "{{ challengeId }}"
+              type: answers
+
+      # load next page
+      - get:
+          url: "/api/assessments/{{ assessmentId }}"
+      - get:
+          url: "/api/assessments/{{ assessmentId }}/next"
+          capture:
+            json: "$.data.id"
+            as: "challengeId"
+      - get:
+          url: "/api/answers?assessment={{ assessmentId }}&challenge={{ challengeId }}"

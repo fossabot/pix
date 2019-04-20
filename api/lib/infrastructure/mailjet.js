@@ -25,6 +25,11 @@ function _formatPayload(options) {
 }
 
 function sendEmail(options) {
+  if (!mailjetConfig.enabled) {
+    console.log('should not send email');
+    return Promise.resolve();
+  }
+
   return mailCheck.checkMail(options.to).then(()=>{
     const mailjet = nodeMailjet.connect(mailjetConfig.apiKey, mailjetConfig.apiSecret);
 

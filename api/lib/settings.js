@@ -36,11 +36,13 @@ module.exports = (function() {
     },
 
     mailjet: {
+      enabled: !!process.env.MAILJET_KEY,
       apiKey: process.env.MAILJET_KEY,
       apiSecret: process.env.MAILJET_SECRET
     },
 
     googleReCaptcha: {
+      enabled: !!process.env.RECAPTCHA_KEY,
       secret: process.env.RECAPTCHA_KEY
     },
 

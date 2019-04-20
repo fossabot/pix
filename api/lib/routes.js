@@ -27,4 +27,5 @@ module.exports = [
   require('./application/smartPlacementProgressions'),
   require('./application/snapshots'),
   require('./application/users'),
+  require('./application/memory'),
 ];
