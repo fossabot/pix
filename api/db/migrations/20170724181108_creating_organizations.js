@@ -7,7 +7,6 @@ exports.up = function(knex) {
     table.string('name').notNullable();
     table.dateTime('createdAt').notNullable().defaultTo(knex.fn.now());
     table.dateTime('updatedAt').notNullable().defaultTo(knex.fn.now());
-    table.bigInteger('userId').index().references('users.id');
   }
 
   return knex.schema
