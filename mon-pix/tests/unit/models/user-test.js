@@ -54,4 +54,34 @@ describe('Unit | Model | user model', function() {
       });
     });
   });
+
+  describe('@isOrganization', () => {
+    it('should return true', function() {
+      return run(() => {
+        // given
+        const model = this.subject();
+        model.set('boardOrganizationId', 42);
+
+        // when
+        const isOrganization = model.get('isOrganization');
+
+        // then
+        expect(isOrganization).to.be.true;
+      });
+    });
+
+    it('should return false', function() {
+      return run(() => {
+        // given
+        const model = this.subject();
+        model.set('boardOrganizationId', null);
+
+        // when
+        const isOrganization = model.get('isOrganization');
+
+        // then
+        expect(isOrganization).to.be.false;
+      });
+    });
+  });
 });

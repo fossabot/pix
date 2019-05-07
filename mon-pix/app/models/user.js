@@ -10,6 +10,7 @@ export default Model.extend({
   usesProfileV2: attr('boolean'),
   password: attr('string'),
   cgu: attr('boolean'),
+  boardOrganizationId: attr('string'),
   recaptchaToken: attr('string'),
   totalPixScore: attr('number'),
   pixScore: belongsTo('pix-score'),
@@ -42,5 +43,9 @@ export default Model.extend({
 
   areasCode: computed('scorecards.@each.area', function() {
     return this.scorecards.mapBy('area.code').uniq();
+  }),
+
+  isOrganization: computed('boardOrganizationId', function() {
+    return this.boardOrganizationId ? true : false;
   }),
 });
