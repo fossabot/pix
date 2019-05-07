@@ -9,7 +9,7 @@ export async function authenticateAsSimpleExternalUser() {
   await visit('/connexion?token=aaa.' + btoa('{"user_id":3,"source":"external","iat":1545321469,"exp":4702193958}') + '.bbb');
 }
 
-export async function authenticateAsPrescriber() {
+export async function authenticateAsOrganization() {
   await visit('/connexion');
   await fillIn('#email', 'john@acme.com');
   await fillIn('#password', 'John1234');

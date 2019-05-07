@@ -18,7 +18,7 @@ const simpleExternalUserAuthentication = {
     id: 3
   }
 };
-const prescriberAuthentication = {
+const organizationAuthentication = {
   data: {
     type: 'authentication',
     attributes: {
@@ -42,7 +42,7 @@ export default function(schema, request) {
   const token = JSON.parse(request.requestBody).data.attributes.token;
 
   if (email === 'jane@acme.com') return simpleUserAuthentication;
-  if (email === 'john@acme.com') return prescriberAuthentication;
+  if (email === 'john@acme.com') return organizationAuthentication;
 
   const userId = JSON.parse(atob(token.split('.')[1])).user_id;
 

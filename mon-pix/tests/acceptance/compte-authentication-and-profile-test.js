@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, it } from 'mocha';
 import { expect } from 'chai';
 import startApp from '../helpers/start-app';
 import destroyApp from '../helpers/destroy-app';
-import { authenticateAsPrescriber, authenticateAsSimpleUser } from '../helpers/testing';
+import { authenticateAsOrganization, authenticateAsSimpleUser } from '../helpers/testing';
 import defaultScenario from '../../mirage/scenarios/default';
 
 describe('Acceptance | Espace compte | Authentication', function() {
@@ -45,7 +45,7 @@ describe('Acceptance | Espace compte | Authentication', function() {
 
       it('should redirect to the /board after connexion for users with organization', async function() {
         // given
-        await authenticateAsPrescriber();
+        await authenticateAsOrganization();
 
         // then
         return andThen(function() {

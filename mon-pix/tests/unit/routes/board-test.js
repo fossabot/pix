@@ -16,14 +16,16 @@ describe('Unit | Route | board', function() {
 
     beforeEach(function() {
       this.register('service:store', Service.extend({
-        query: sinon.stub().resolves([{ id: 1 }, { id: 2 }])
+        query: sinon.stub().resolves([{ id: 1 }, { id: 2 }]),
+        findRecord: sinon.stub().withArgs('organization', 123)
+          .resolves({ id: 123 })
       }));
-      this.inject.service('store', { as: 'store' });
+      this.inject.service('store');
 
       this.register('service:currentUser', Service.extend({
-        user: { organizations: [{ id: 1 }, { id: 2 }] }
+        user: { isOrganization: true, boardOrganizationId: 123 }
       }));
-      this.inject.service('currentUser', { as: 'currentUser' });
+      this.inject.service('currentUser');
 
       route = this.subject();
       route.transitionTo = sinon.spy();
@@ -35,7 +37,7 @@ describe('Unit | Route | board', function() {
 
       // then
       return result.then((model) => {
-        expect(model.organization.id).to.equal(1);
+        expect(model.organization.id).to.equal(123);
         expect(model.snapshots.length).to.equal(2);
       });
     });
@@ -45,7 +47,7 @@ describe('Unit | Route | board', function() {
 
     beforeEach(function() {
       this.register('service:currentUser', Service.extend({
-        user: { organizations: [] }
+        user: { isOrganization: false, organizations: [] }
       }));
       this.inject.service('currentUser', { as: 'currentUser' });
 

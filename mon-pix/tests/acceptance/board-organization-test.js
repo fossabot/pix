@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, it } from 'mocha';
 import { expect } from 'chai';
 import startApp from '../helpers/start-app';
 import destroyApp from '../helpers/destroy-app';
-import { authenticateAsPrescriber } from '../helpers/testing';
+import { authenticateAsOrganization } from '../helpers/testing';
 import defaultScenario from '../../mirage/scenarios/default';
 
 describe('Acceptance | Board organization', function() {
@@ -19,7 +19,7 @@ describe('Acceptance | Board organization', function() {
 
   it('can visit /board', async function() {
     // given
-    await authenticateAsPrescriber();
+    await authenticateAsOrganization();
 
     // when
     await visit('/board');
@@ -42,7 +42,7 @@ describe('Acceptance | Board organization', function() {
 
   it('should display the name and the code of my organization', async function() {
     // given
-    await authenticateAsPrescriber();
+    await authenticateAsOrganization();
 
     // when
     await visit('/board');
@@ -56,7 +56,7 @@ describe('Acceptance | Board organization', function() {
 
   it('should display an empty list of snapshot', async function() {
     // given
-    await authenticateAsPrescriber();
+    await authenticateAsOrganization();
 
     // when
     await visit('/board');
@@ -69,7 +69,7 @@ describe('Acceptance | Board organization', function() {
 
   it('should display a link to download snapshots', async function() {
     // given
-    await authenticateAsPrescriber();
+    await authenticateAsOrganization();
 
     // when
     await visit('/board');

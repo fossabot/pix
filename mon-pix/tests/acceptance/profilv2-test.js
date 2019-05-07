@@ -5,7 +5,7 @@ import {
   it
 } from 'mocha';
 import { expect } from 'chai';
-import { authenticateAsPrescriber, authenticateAsSimpleUser } from '../helpers/testing';
+import { authenticateAsOrganization, authenticateAsSimpleUser } from '../helpers/testing';
 import startApp from '../helpers/start-app';
 import destroyApp from '../helpers/destroy-app';
 import defaultScenario from '../../mirage/scenarios/default';
@@ -211,7 +211,7 @@ describe('Acceptance | Profil v2 | Afficher profil v2', function() {
 
   describe('Authenticated cases as user with organization', function() {
     beforeEach(async function() {
-      await authenticateAsPrescriber();
+      await authenticateAsOrganization();
     });
 
     it('can visit /profilv2', async function() {
