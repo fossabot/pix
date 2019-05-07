@@ -33,6 +33,7 @@ describe('Unit | Serializer | JSONAPI | user-serializer', () => {
         pixOrgaTermsOfServiceAccepted: false,
         pixCertifTermsOfServiceAccepted: false,
         password: '',
+        boardOrganizationId: 123,
         organizations: [],
       });
 
@@ -48,7 +49,8 @@ describe('Unit | Serializer | JSONAPI | user-serializer', () => {
             'email': 'lskywalker@deathstar.empire',
             'cgu': true,
             'pix-orga-terms-of-service-accepted': false,
-            'pix-certif-terms-of-service-accepted': false
+            'pix-certif-terms-of-service-accepted': false,
+            'board-organization-id': 123,
           },
           id: '234567',
           type: 'users',
