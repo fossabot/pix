@@ -480,12 +480,13 @@ describe('Acceptance | Application | organization-controller', () => {
 
   describe('GET /api/organizations/{id}', () => {
 
-    let organization;
+    let organization, otherUser;
     let options;
 
     beforeEach(async () => {
       const userPixMaster = databaseBuilder.factory.buildUser.withPixRolePixMaster();
       organization = databaseBuilder.factory.buildOrganization();
+      otherUser = databaseBuilder.factory.buildUser();
       await databaseBuilder.commit();
 
       options = {
@@ -573,8 +574,7 @@ describe('Acceptance | Application | organization-controller', () => {
 
       it('should respond with a 403 - forbidden access - if user has not role PIX_MASTER', () => {
         // given
-        const nonPixMAsterUserId = 9999;
-        options.headers.authorization = generateValidRequestAuhorizationHeader(nonPixMAsterUserId);
+        options.headers.authorization = generateValidRequestAuhorizationHeader(otherUser.id);
 
         // when
         const promise = server.inject(options);

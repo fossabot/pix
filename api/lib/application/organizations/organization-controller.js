@@ -12,9 +12,10 @@ const EXPORT_CSV_FILE_NAME = 'Pix - Export donnees partagees.csv';
 module.exports = {
 
   getOrganizationDetails: (request) => {
-    const organizationId = request.params.id;
+    const userId = request.auth.credentials.userId;
+    const organizationId = parseInt(request.params.id);
 
-    return usecases.getOrganizationDetails({ organizationId })
+    return usecases.getOrganizationDetails({ userId, organizationId })
       .then(organizationSerializer.serialize);
   },
 
