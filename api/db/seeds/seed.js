@@ -23,11 +23,11 @@ exports.seed = (knex) => {
 
   const databaseBuilder = new DatabaseBuilder({ knex });
 
+  organizationsBuilder({ databaseBuilder });
   usersBuilder({ databaseBuilder });
   usersPixRolesBuilder({ databaseBuilder });
   pixAileBuilder({ databaseBuilder });
   dragonAndCoBuilder({ databaseBuilder });
-  organizationsBuilder({ databaseBuilder });
   snapshotsBuilder({ databaseBuilder });
   campaignsBuilder({ databaseBuilder });
   campaignParticipationsBuilder({ databaseBuilder });

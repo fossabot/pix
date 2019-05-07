@@ -1,5 +1,13 @@
 module.exports = function addDragonAndCoWithrelated({ databaseBuilder }) {
 
+  const dragonAndCoCompany = databaseBuilder.factory.buildOrganization({
+    id: 1,
+    type: 'PRO',
+    name: 'Dragon & Co',
+    code: 'DRAGO',
+    logoUrl: require('../src/dragonAndCoBase64')
+  });
+
   const proUserDaenerys = databaseBuilder.factory.buildUser.withUnencryptedPassword({
     id: 2,
     firstName: 'Daenerys',
@@ -7,15 +15,7 @@ module.exports = function addDragonAndCoWithrelated({ databaseBuilder }) {
     email: 'pro@example.net',
     rawPassword: 'pix123',
     cgu: true,
-  });
-
-  const dragonAndCoCompany = databaseBuilder.factory.buildOrganization({
-    id: 1,
-    type: 'PRO',
-    name: 'Dragon & Co',
-    userId: proUserDaenerys.id,
-    code: 'DRAGO',
-    logoUrl: require('../src/dragonAndCoBase64')
+    boardOrganizationId: dragonAndCoCompany.id,
   });
 
   databaseBuilder.factory.buildMembership({
@@ -44,6 +44,13 @@ module.exports = function addDragonAndCoWithrelated({ databaseBuilder }) {
       databaseBuilder.factory.buildTargetProfilesSkills({ targetProfileId: privateTargetProfile.id, skillId });
     });
 
+  const dragonAndCoSubsidiary = databaseBuilder.factory.buildOrganization({
+    id: 4,
+    type: 'PRO',
+    name: 'Dragon subsidiary',
+    code: 'DRASUB'
+  });
+
   const proUserSub = databaseBuilder.factory.buildUser.withUnencryptedPassword({
     id: 6,
     firstName: 'Viserys',
@@ -51,14 +58,7 @@ module.exports = function addDragonAndCoWithrelated({ databaseBuilder }) {
     email: 'prosub@example.net',
     rawPassword: 'pix123',
     cgu: true,
-  });
-
-  const dragonAndCoSubsidiary = databaseBuilder.factory.buildOrganization({
-    id: 4,
-    type: 'PRO',
-    name: 'Dragon subsidiary',
-    userId: proUserSub.id,
-    code: 'DRASUB'
+    boardOrganizationId: dragonAndCoSubsidiary.id,
   });
 
   databaseBuilder.factory.buildMembership({
@@ -72,6 +72,13 @@ module.exports = function addDragonAndCoWithrelated({ databaseBuilder }) {
     organizationId: dragonAndCoSubsidiary.id
   });
 
+  const dragonAndCoSubsidiary2 = databaseBuilder.factory.buildOrganization({
+    id: 5,
+    type: 'PRO',
+    name: 'Dragon subsidiary 2',
+    code: 'DRASU2'
+  });
+
   const proUserSub2 = databaseBuilder.factory.buildUser.withUnencryptedPassword({
     id: 7,
     firstName: 'Rhaegon',
@@ -79,14 +86,7 @@ module.exports = function addDragonAndCoWithrelated({ databaseBuilder }) {
     email: 'prosub2@example.net',
     rawPassword: 'pix123',
     cgu: true,
-  });
-
-  const dragonAndCoSubsidiary2 = databaseBuilder.factory.buildOrganization({
-    id: 5,
-    type: 'PRO',
-    name: 'Dragon subsidiary 2',
-    userId: proUserSub2.id,
-    code: 'DRASU2'
+    boardOrganizationId: dragonAndCoSubsidiary2.id,
   });
 
   databaseBuilder.factory.buildMembership({

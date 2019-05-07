@@ -15,10 +15,11 @@ const buildUser = function buildUser({
   email = faker.internet.exampleEmail().toLowerCase(),
   password = encrypt.hashPasswordSync(faker.internet.password()),
   cgu = true,
+  boardOrganizationId = null,
 } = {}) {
 
   const values = {
-    id, firstName, lastName, email, password, cgu,
+    id, firstName, lastName, email, password, cgu, boardOrganizationId,
   };
 
   databaseBuffer.pushInsertable({
@@ -36,12 +37,13 @@ buildUser.withUnencryptedPassword = function buildUserWithUnencryptedPassword({
   email = faker.internet.email(),
   rawPassword = faker.internet.password(),
   cgu = true,
+  boardOrganizationId = null,
 }) {
 
   const password = encrypt.hashPasswordSync(rawPassword);
 
   const values = {
-    id, firstName, lastName, email, password, cgu,
+    id, firstName, lastName, email, password, cgu, boardOrganizationId,
   };
 
   databaseBuffer.pushInsertable({
@@ -59,10 +61,11 @@ buildUser.withPixRolePixMaster = function buildUserWithPixRolePixMaster({
   email = faker.internet.email(),
   password = encrypt.hashPasswordSync(faker.internet.password()),
   cgu = true,
+  boardOrganizationId = null,
 } = {}) {
 
   const values = {
-    id, firstName, lastName, email, password, cgu,
+    id, firstName, lastName, email, password, cgu, boardOrganizationId,
   };
 
   const pixRolePixMaster = buildPixRole({ id: 1, name: 'PIX_MASTER' });
@@ -85,22 +88,23 @@ buildUser.withMembership = function buildUserWithMemberships({
   password = 'encrypt.hashPasswordSync(faker.internet.password())',
   cgu = true,
   organizationId = null,
-  organizationRoleId = null
+  organizationRoleId = null,
+  boardOrganizationId = null,
 } = {}) {
 
   const values = {
-    id, firstName, lastName, email, password, cgu,
+    id, firstName, lastName, email, password, cgu, boardOrganizationId,
   };
 
   organizationId = _.isNil(organizationId) ? buildOrganization({ name: faker.company.name() }).id : organizationId;
   organizationRoleId = _.isNil(organizationRoleId) ? buildOrganizationRole({ name: 'ADMIN' }).id : organizationRoleId;
 
-  buildMembership({ 
-    userId: id, 
+  buildMembership({
+    userId: id,
     organizationId,
     organizationRoleId
   });
-  
+
   databaseBuffer.pushInsertable({
     tableName: 'users',
     values,

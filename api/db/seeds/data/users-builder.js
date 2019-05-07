@@ -7,6 +7,7 @@ module.exports = function usersBuilder({ databaseBuilder }) {
     email: 'sup@example.net',
     rawPassword: 'pix123',
     cgu: true,
+    boardOrganizationId: 2,
   });
 
   databaseBuilder.factory.buildUser.withUnencryptedPassword({
@@ -16,6 +17,7 @@ module.exports = function usersBuilder({ databaseBuilder }) {
     email: 'sco@example.net',
     rawPassword: 'pix123',
     cgu: true,
+    boardOrganizationId: 3,
   });
 
   databaseBuilder.factory.buildUser.withUnencryptedPassword({
