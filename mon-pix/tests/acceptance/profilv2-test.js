@@ -209,7 +209,7 @@ describe('Acceptance | Profil v2 | Afficher profil v2', function() {
     });
   });
 
-  describe('Authenticated cases as user with organization', function() {
+  describe('Authenticated cases as user with boardOrganization', function() {
     beforeEach(async function() {
       await authenticateAsOrganization();
     });
