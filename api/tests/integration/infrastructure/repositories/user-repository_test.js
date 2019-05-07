@@ -22,6 +22,7 @@ describe('Integration | Infrastructure | Repository | UserRepository', () => {
     password: bcrypt.hashSync('A124B2C3#!', 1),
     cgu: true,
     samlId: 'some-saml-id',
+    boardOrganizationId: 123,
   };
   let userInDB, organizationInDB, organizationRoleInDB, membershipInDB, certificationCenterInDB, certificationCenterMembershipInDB;
 
@@ -295,6 +296,7 @@ describe('Integration | Infrastructure | Repository | UserRepository', () => {
           expect(user.email).to.equal(userInDb.email);
           expect(user.cgu).to.be.true;
           expect(user.pixRoles).to.be.an('array');
+          expect(user.boardOrganizationId).to.equal(123);
         });
       });
 
@@ -336,6 +338,7 @@ describe('Integration | Infrastructure | Repository | UserRepository', () => {
           expect(user.email).to.equal(expectedUser.email);
           expect(user.password).to.equal(expectedUser.password);
           expect(user.cgu).to.equal(expectedUser.cgu);
+          expect(user.boardOrganizationId).to.equal(123);
         });
       });
 
