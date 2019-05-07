@@ -10,8 +10,7 @@ describe('Unit | Route | compte', function() {
     needs: ['service:session', 'service:metrics', 'service:currentUser']
   });
 
-  describe('model', function() {
-
+  describe('beforeModel', function() {
     beforeEach(function() {
       this.register('service:session', Service.extend({
         isAuthenticated: true,
@@ -20,10 +19,9 @@ describe('Unit | Route | compte', function() {
     });
 
     context('when user is an organization', function() {
-
       beforeEach(function() {
         this.register('service:currentUser', Service.extend({
-          user: { organizations: [{ id: 1 }] }
+          user: { isOrganization: true }
         }));
         this.inject.service('currentUser');
       });
@@ -34,46 +32,57 @@ describe('Unit | Route | compte', function() {
         route.transitionTo = sinon.spy();
 
         // When
-        await route.model();
+        await route.beforeModel();
 
         // Then
         sinon.assert.calledWith(route.transitionTo, 'board');
       });
     });
 
-    context('when user is regular user', function() {
-
-      let storyStub;
-      let queryRecordStub;
-
+    context('when user is a regular user', function() {
       beforeEach(function() {
         this.register('service:currentUser', Service.extend({
-          user: { organizations: [] }
+          user: { isOrganization: false }
         }));
         this.inject.service('currentUser');
-
-        queryRecordStub = sinon.stub();
-        storyStub = Service.extend({
-          queryRecord: queryRecordStub
-        });
       });
 
-      it('should load user profile', async function() {
+      it('should remain on /compte', async function() {
         // Given
-        const foundUser = EmberObject.create({ id: 'hello' });
-
-        this.register('service:store', storyStub);
-        this.inject.service('store', { as: 'store' });
-
-        queryRecordStub.withArgs('user', { profile: true }).resolves(foundUser);
         const route = this.subject();
+        route.transitionTo = sinon.spy();
 
         // When
-        const model = await route.model();
+        await route.beforeModel();
 
         // Then
-        expect(model).to.deep.equal(foundUser);
+        sinon.assert.notCalled(route.transitionTo);
       });
+    });
+  });
+
+  describe('model', function() {
+    let queryRecordStub;
+
+    beforeEach(function() {
+      queryRecordStub = sinon.stub();
+      this.register('service:store', Service.extend({
+        queryRecord: queryRecordStub
+      }));
+      this.inject.service('store');
+    });
+
+    it('should load user profile', async function() {
+      // Given
+      const foundUser = EmberObject.create({ id: 'hello' });
+      queryRecordStub.withArgs('user', { profile: true }).resolves(foundUser);
+
+      // When
+      const route = this.subject();
+      const model = await route.model();
+
+      // Then
+      expect(model).to.deep.equal(foundUser);
     });
   });
 

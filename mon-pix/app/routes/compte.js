@@ -6,14 +6,15 @@ export default Route.extend(AuthenticatedRouteMixin, {
 
   currentUser: service(),
 
-  async model() {
-    const user = this.currentUser.user;
-    const organizations = await user.organizations;
-
-    if (organizations.length) {
+  beforeModel() {
+    if (this.currentUser.get('user.isOrganization')) {
       return this.transitionTo('board');
     }
 
+    return this._super(...arguments);
+  },
+
+  async model() {
     return this.store.queryRecord('user', { profile: true });
   },
 
