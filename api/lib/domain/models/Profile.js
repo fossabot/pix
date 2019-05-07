@@ -18,14 +18,12 @@ class Profile {
     competences,
     courses,
     lastAssessments,
-    organizations,
     user,
     // references
   } = {}) {
     // includes
     this.areas = areas;
     this.competences = competences;
-    this.organizations = organizations;
     this.user = user;
     // references
 

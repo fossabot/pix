@@ -158,7 +158,6 @@ describe('Acceptance | Controller | users-controller-get-profile', () => {
       }
     }],
     areas: [{ id: 'recAreaA', name: 'domaine-name-1' }, { id: 'recAreaB', name: 'domaine-name-2' }],
-    organizations: []
   };
 
   describe('GET /api/users/profile', () => {

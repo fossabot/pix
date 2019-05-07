@@ -138,7 +138,7 @@ module.exports = {
       .where({ id: userId })
       .fetch({
         require: true,
-        withRelated: ['pixRoles', 'organizations']
+        withRelated: ['pixRoles']
       })
       .then((bookshelfUser) => bookshelfUser.toDomainEntity())
       .catch((err) => {
@@ -205,7 +205,7 @@ module.exports = {
 
   create(domainUser) {
     const userToCreate = _.omit(domainUser, [
-      'organizations', 'campaignParticipations', 'pixRoles', 'memberships',
+      'campaignParticipations', 'pixRoles', 'memberships',
       'certificationCenterMemberships', 'pixScore', 'knowledgeElements',
       'scorecards',
     ]);
@@ -238,7 +238,7 @@ module.exports = {
 
   updateUser(domainUser) {
     const userToUpdate = _.omit(domainUser, [
-      'organizations', 'campaignParticipations', 'pixRoles', 'memberships',
+      'campaignParticipations', 'pixRoles', 'memberships',
       'certificationCenterMemberships', 'pixScore', 'knowledgeElements',
       'scorecards',
     ]);

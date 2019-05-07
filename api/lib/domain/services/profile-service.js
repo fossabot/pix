@@ -3,7 +3,6 @@ const competenceRepository = require('../../infrastructure/repositories/competen
 const areaRepository = require('../../infrastructure/repositories/area-repository');
 const courseRepository = require('../../infrastructure/repositories/course-repository');
 const assessmentRepository = require('../../infrastructure/repositories/assessment-repository');
-const organizationRepository = require('../../infrastructure/repositories/organization-repository');
 
 const Profile = require('../models/Profile');
 
@@ -28,10 +27,9 @@ const profileService = {
     const adaptiveCourses = courseRepository.getAdaptiveCourses();
     const lastAssessments = assessmentRepository.findLastAssessmentsForEachCoursesByUser(user_id);
     const assessmentsCompletedWithResults = assessmentRepository.findCompletedAssessmentsByUserId(user_id);
-    const organizations = organizationRepository.findByUserId(user_id);
 
-    return Promise.all([user, competences, areas, lastAssessments, assessmentsCompletedWithResults, adaptiveCourses, organizations])
-      .then(([user, competences, areas, lastAssessments, assessmentsCompletedWithResults, adaptiveCourses, organizations]) => {
+    return Promise.all([user, competences, areas, lastAssessments, assessmentsCompletedWithResults, adaptiveCourses])
+      .then(([user, competences, areas, lastAssessments, assessmentsCompletedWithResults, adaptiveCourses]) => {
 
         const competencesWithDefaultLevelAndStatus = _initCompetenceLevel(competences);
 
@@ -42,7 +40,6 @@ const profileService = {
           lastAssessments,
           assessmentsCompletedWithResults,
           courses: adaptiveCourses,
-          organizations,
         });
       });
   },

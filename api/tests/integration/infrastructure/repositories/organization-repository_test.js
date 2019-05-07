@@ -1,7 +1,6 @@
 const { expect, knex, domainBuilder, databaseBuilder } = require('../../../test-helper');
 
 const faker = require('faker');
-const bcrypt = require('bcrypt');
 const _ = require('lodash');
 
 const Organization = require('../../../../lib/domain/models/Organization');
@@ -288,100 +287,7 @@ describe('Integration | Repository | Organization', function() {
     });
   });
 
-  describe('#getByUserId', () => {
-
-    const firstInsertedOrganization = {
-      type: 'PRO',
-      name: 'organization 1',
-      userId: 1,
-      id: 1,
-      code: 'ABCD12'
-    };
-
-    const secondInsertedOrganization = {
-      type: 'SCO',
-      name: 'organization 2',
-      userId: 2,
-      id: 2,
-      code: 'EFGH34'
-    };
-
-    const thirdInsertedOrganization = {
-      type: 'SUP',
-      name: 'organization 3',
-      userId: 1,
-      id: 3,
-      code: 'IJKL56'
-    };
-
-    const organizations = [firstInsertedOrganization, secondInsertedOrganization, thirdInsertedOrganization];
-
-    before(() => {
-      return knex('organizations')
-        .then(() => {
-          return knex('organizations').insert(organizations);
-        });
-    });
-
-    after(() => {
-      return knex('organizations').delete();
-    });
-
-    describe('success management', function() {
-
-      it('should return an organization by provided userId', function() {
-        // given
-        const userId = 2;
-
-        // then
-        return organizationRepository.findByUserId(userId)
-          .then((foundOrganizations) => {
-            expect(foundOrganizations).to.exist;
-            expect(foundOrganizations).to.be.an('array');
-            expect(foundOrganizations[0].type).to.equal(secondInsertedOrganization.type);
-            expect(foundOrganizations[0].name).to.equal(secondInsertedOrganization.name);
-            expect(foundOrganizations[0].id).to.equal(secondInsertedOrganization.id);
-            expect(foundOrganizations[0].code).to.equal(secondInsertedOrganization.code);
-          });
-      });
-
-      it('should return all organizations when provided userId has multiple organizations', function() {
-        // given
-        const userId = 1;
-
-        // when
-        const promise = organizationRepository.findByUserId(userId);
-
-        // then
-        return promise.then((foundOrganizations) => {
-          expect(foundOrganizations).to.exist;
-          expect(foundOrganizations).to.be.an('array');
-          expect(foundOrganizations).to.have.lengthOf(2);
-        });
-
-      });
-
-      it('should return an empty Array, when organization id is not found', function() {
-        const userId = 10083;
-        return organizationRepository.findByUserId(userId)
-          .then((organization) => {
-            expect(organization).to.deep.equal([]);
-          });
-      });
-
-    });
-  });
-
   describe('#findBy', () => {
-
-    const userPassword = bcrypt.hashSync('A124B2C3#!', 1);
-    const associatedUser = {
-      firstName: faker.name.firstName(),
-      lastName: faker.name.lastName(),
-      email: faker.internet.email(),
-      password: userPassword,
-      cgu: true
-    };
 
     const insertedOrganization1 = {
       type: 'PRO',
@@ -395,19 +301,11 @@ describe('Integration | Repository | Organization', function() {
     };
 
     beforeEach(() => {
-      return knex('users').returning('id').insert(associatedUser)
-        .then((userIdArray) => {
-          insertedOrganization1.userId = userIdArray[0];
-          insertedOrganization2.userId = userIdArray[0];
-          return knex('organizations').insert([insertedOrganization1, insertedOrganization2]);
-        });
+      return knex('organizations').insert([insertedOrganization1, insertedOrganization2]);
     });
 
     afterEach(() => {
-      return knex('users').delete()
-        .then(() => {
-          return knex('organizations').delete();
-        });
+      return knex('organizations').delete();
     });
 
     it('should return the organizations that matches the filters', async () => {
@@ -425,7 +323,6 @@ describe('Integration | Repository | Organization', function() {
       expect(foundOrganization).to.be.an.instanceof(Organization);
       expect(foundOrganization.code).to.equal(insertedOrganization1.code);
       expect(foundOrganization.type).to.equal('PRO');
-      expect(foundOrganization.user).to.be.undefined;
     });
   });
 
@@ -556,12 +453,12 @@ describe('Integration | Repository | Organization', function() {
     context('when there are multiple Organizations matching the fields "first name", "last name" and "email" search pattern', () => {
 
       beforeEach(() => {
-        // Matching users
+        // Matching organizations
         databaseBuilder.factory.buildOrganization({ name: 'name_ok_1', type: 'SCO', code: 'c_ok_1' });
         databaseBuilder.factory.buildOrganization({ name: 'name_ok_2', type: 'SCO', code: 'c_ok_2' });
         databaseBuilder.factory.buildOrganization({ name: 'name_ok_3', type: 'SCO', code: 'c_ok_3' });
 
-        // Unmatching users
+        // Unmatching organizations
         databaseBuilder.factory.buildOrganization({ name: 'name_ko_4', type: 'SCO', code: 'c_ok_4' });
         databaseBuilder.factory.buildOrganization({ name: 'name_ok_5', type: 'SUP', code: 'c_ok_5' });
         databaseBuilder.factory.buildOrganization({ name: 'name_ok_6', type: 'SCO', code: 'c_ko_1' });
@@ -656,5 +553,5 @@ describe('Integration | Repository | Organization', function() {
       });
     });
   });
-  
+
 });

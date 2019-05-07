@@ -376,7 +376,7 @@ describe('Unit | Controller | user-controller', () => {
       sinon.stub(usecases, 'getUserWithMemberships');
     });
 
-    it('should return serialized Organizations Accesses', async function() {
+    it('should return serialized memberships', async function() {
       // given
       usecases.getUserWithMemberships.withArgs({
         requestedUserId: userId,

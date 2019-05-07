@@ -16,12 +16,11 @@ describe('Acceptance | Controller | users-controller-get-memberships', () => {
 
   describe('GET /users/:id/memberships', () => {
 
-    function _insertOrganization(userId) {
+    function _insertOrganization() {
       const organizationRaw = {
         name: 'The name of the organization',
         type: 'SUP',
         code: 'AAA111',
-        userId,
       };
 
       return knex('organizations').insert(organizationRaw).returning('id');
@@ -67,7 +66,7 @@ describe('Acceptance | Controller | users-controller-get-memberships', () => {
     beforeEach(() => {
       return _insertUser()
         .then(([id]) => userId = id)
-        .then(() => _insertOrganization(userId))
+        .then(() => _insertOrganization())
         .then(([id]) => organizationId = id)
         .then(() => _insertOrganizationRoles()
           .then(([id]) => organizationRoleId = id)

@@ -2,7 +2,6 @@ const { expect } = require('../../../../test-helper');
 const serializer = require('../../../../../lib/infrastructure/serializers/jsonapi/profile-serializer');
 const Profile = require('../../../../../lib/domain/models/Profile');
 const BookshelfUser = require('../../../../../lib/infrastructure/data/user');
-const Organization = require('../../../../../lib/domain/models/Organization');
 const Assessment = require('../../../../../lib/domain/models/Assessment');
 const AssessmentResult = require('../../../../../lib/domain/models/AssessmentResult');
 const Area = require('../../../../../lib/domain/models/Area');
@@ -14,25 +13,18 @@ describe('Unit | Serializer | JSONAPI | profile-serializer', () => {
     let user;
     let areas;
     let competences;
-    let organizations;
     let finishedAssessment;
     let nonFinishedAssessment;
     let lastAssessments;
     let assessmentsCompletedWithResults;
     let courses;
 
-    let emptyCompetences;
-    let emptyAreas;
     let emptyAssessments;
     let emptyCourses;
-    let emptyOrganizations;
 
     beforeEach(() => {
-      emptyCompetences = [];
-      emptyAreas = [];
       emptyAssessments = [];
       emptyCourses = [];
-      emptyOrganizations = [];
 
       user = new BookshelfUser({
         id: 'user_id',
@@ -92,21 +84,6 @@ describe('Unit | Serializer | JSONAPI | profile-serializer', () => {
           isRetryable: false,
         }];
 
-      organizations = [
-        new Organization({
-          id: 'organizationId1',
-          name: 'etablissement 1',
-          type: 'SCO',
-          code: 'ABCD12',
-        }),
-        new Organization({
-          id: 'organizationId2',
-          name: 'etablissement 2',
-          type: 'PRO',
-          code: 'EFGH34',
-        }),
-      ];
-
       finishedAssessment = Assessment.fromAttributes({
         id: 'assessmentID1',
         courseId: 'courseID1',
@@ -144,7 +121,6 @@ describe('Unit | Serializer | JSONAPI | profile-serializer', () => {
         lastAssessments,
         assessmentsCompletedWithResults,
         courses,
-        organizations: emptyOrganizations,
       });
       const expectedJson = {
         data: {
@@ -282,7 +258,6 @@ describe('Unit | Serializer | JSONAPI | profile-serializer', () => {
         lastAssessments: emptyAssessments,
         assessmentsCompletedWithResults: emptyAssessments,
         courses: emptyCourses,
-        organizations: emptyOrganizations,
       });
 
       // when
@@ -290,93 +265,6 @@ describe('Unit | Serializer | JSONAPI | profile-serializer', () => {
 
       // then
       expect(userSerialized.data.attributes).not.to.have.property('total-pix-score');
-    });
-
-    it('should serialize organizations if user is admin of some organizations', function() {
-      // given
-      const profile = new Profile({
-        user,
-        competences: emptyCompetences,
-        areas: emptyAreas,
-        lastAssessments: emptyAssessments,
-        assessmentsCompletedWithResults: emptyAssessments,
-        courses: emptyCourses,
-        organizations,
-      });
-      const expectedJsonWithOrganisations = {
-        data: {
-          type: 'users',
-          id: 'user_id',
-          attributes: {
-            'first-name': 'Luke',
-            'last-name': 'Skywalker',
-            'email': 'luke@sky.fr',
-          },
-          relationships: {
-            organizations: {
-              data: [
-                { type: 'organizations', id: 'organizationId1' },
-                { type: 'organizations', id: 'organizationId2' },
-              ],
-            },
-            'campaign-participations': {
-              links: {
-                related: '/api/users/user_id/campaign-participations'
-              },
-            },
-            'pix-score': {
-              links: {
-                related: '/api/users/user_id/pixscore'
-              }
-            },
-            'scorecards': {
-              links: {
-                related: '/api/users/user_id/scorecards'
-              }
-            },
-          },
-        },
-        included: [
-          {
-            type: 'organizations',
-            id: 'organizationId1',
-            attributes: {
-              name: 'etablissement 1',
-              type: 'SCO',
-              code: 'ABCD12',
-            },
-            relationships: {
-              snapshots: {
-                links: {
-                  related: '/api/organizations/organizationId1/snapshots',
-                },
-              },
-            },
-          },
-          {
-            type: 'organizations',
-            id: 'organizationId2',
-            attributes: {
-              name: 'etablissement 2',
-              type: 'PRO',
-              code: 'EFGH34',
-            },
-            relationships: {
-              snapshots: {
-                links: {
-                  related: '/api/organizations/organizationId2/snapshots',
-                },
-              },
-            },
-          },
-        ],
-      };
-
-      // when
-      const userSerialized = serializer.serialize(profile);
-
-      // then
-      expect(userSerialized).to.be.deep.equal(expectedJsonWithOrganisations);
     });
   });
 });

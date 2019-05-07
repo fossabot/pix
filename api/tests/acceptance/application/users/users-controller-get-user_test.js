@@ -79,9 +79,6 @@ describe('Acceptance | Controller | users-controller-get-user', () => {
                 related: '/api/users/1234/campaign-participations'
               }
             },
-            organizations: {
-              data: []
-            },
           }
         }
       };

@@ -21,14 +21,12 @@ class ProfileSerializer extends JSONAPISerializer {
     }
     const entity = modelObject.user.toJSON();
     const competencesEntity = modelObject.competences;
-    const organizationsEntity = modelObject.organizations;
     const data = {};
     data.type = 'users';
     data.id = entity.id;
     data.attributes = {};
     this._serializeAttributes(entity, data);
     this._serializeRelationships(competencesEntity, 'competences', data);
-    this._serializeRelationships(organizationsEntity, 'organizations', data);
     this._serializeCampaignParticipationsLink(data, entity);
     this._serializePixScoreLink(data, entity);
     this._serializeScorecardsLink(data, entity);
@@ -63,7 +61,6 @@ class ProfileSerializer extends JSONAPISerializer {
     const included = [];
     this._serializeAreaIncluded(model, included);
     this._serializeCompetenceIncluded(model, included);
-    this._serializeOrganizationIncluded(model, included);
     return included;
   }
 
@@ -148,28 +145,6 @@ class ProfileSerializer extends JSONAPISerializer {
       });
     }
   }
-
-  _serializeOrganizationIncluded(model, included) {
-    for (const organization of model.organizations) {
-      included.push({
-        'id': organization.id,
-        'type': 'organizations',
-        attributes: {
-          'name': organization.name,
-          'type': organization.type,
-          'code': organization.code
-        },
-        relationships: {
-          snapshots: {
-            links: {
-              related: `/api/organizations/${organization.id}/snapshots`
-            }
-          }
-        }
-      });
-    }
-  }
-
 }
 
 module.exports = new ProfileSerializer();

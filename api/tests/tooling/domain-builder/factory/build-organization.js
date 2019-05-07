@@ -21,26 +21,11 @@ function buildOrganization(
     type = 'SCO',
     logoUrl = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==',
     createdAt = new Date('2018-01-12T01:02:03Z'),
-    user = null,
     memberships = [],
     targetProfileShares = []
   } = {}) {
-  return new Organization({ id, code, name, type, logoUrl, createdAt, user, memberships, targetProfileShares });
+  return new Organization({ id, code, name, type, logoUrl, createdAt, memberships, targetProfileShares });
 }
-
-buildOrganization.withUser = function(
-  {
-    id = faker.random.number(),
-    code = 'EBG123',
-    name = 'Lycée Luke Skywalker',
-    type = 'SCO',
-    logoUrl = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==',
-    createdAt = new Date('2018-01-12T01:02:03Z'),
-    user = _buildMember()
-  } = {}
-) {
-  return new Organization({ id, code, name, type, logoUrl, createdAt, user });
-};
 
 buildOrganization.withMembers = function(
   {

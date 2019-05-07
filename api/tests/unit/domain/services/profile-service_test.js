@@ -8,7 +8,6 @@ const competenceRepository = require('../../../../lib/infrastructure/repositorie
 const areaRepository = require('../../../../lib/infrastructure/repositories/area-repository');
 const courseRepository = require('../../../../lib/infrastructure/repositories/course-repository');
 const assessmentRepository = require('../../../../lib/infrastructure/repositories/assessment-repository');
-const organizationRepository = require('../../../../lib/infrastructure/repositories/organization-repository');
 
 const Assessment = require('../../../../lib/domain/models/Assessment');
 const AssessmentResult = require('../../../../lib/domain/models/AssessmentResult');
@@ -27,7 +26,6 @@ describe('Unit | Service | Profil User Service', function() {
     let fakeAreaRecords;
     let fakeAssessmentRecords;
     let fakeCoursesRecords;
-    let fakeOrganizationsRecords;
 
     beforeEach(() => {
       fakeUserRecord = new BookshelfUser({
@@ -75,14 +73,6 @@ describe('Unit | Service | Profil User Service', function() {
         nom: 'Test de positionnement 1.1',
         competences: ['competenceId1']
       }];
-
-      fakeOrganizationsRecords = [{
-        id: 'organizationId1',
-        name: 'orga 1'
-      }, {
-        id: 'organizationId2',
-        name: 'orga 2'
-      }];
     });
 
     describe('Enhanced user', () => {
@@ -95,7 +85,6 @@ describe('Unit | Service | Profil User Service', function() {
         sinon.stub(courseRepository, 'getAdaptiveCourses').resolves(fakeCoursesRecords);
         sinon.stub(assessmentRepository, 'findLastAssessmentsForEachCoursesByUser').resolves(fakeAssessmentRecords);
         sinon.stub(assessmentRepository, 'findCompletedAssessmentsByUserId').resolves(fakeAssessmentRecords);
-        sinon.stub(organizationRepository, 'findByUserId').resolves(fakeOrganizationsRecords);
       });
 
       it('should return a resolved promise', () => {
@@ -131,7 +120,6 @@ describe('Unit | Service | Profil User Service', function() {
               isRetryable: false,
             }],
           areas: fakeAreaRecords,
-          organizations: fakeOrganizationsRecords
         };
 
         // when
@@ -167,7 +155,6 @@ describe('Unit | Service | Profil User Service', function() {
               isRetryable: false,
             }],
           areas: fakeAreaRecords,
-          organizations: fakeOrganizationsRecords
         };
 
         // when
@@ -201,19 +188,6 @@ describe('Unit | Service | Profil User Service', function() {
           sinon.assert.calledWith(assessmentRepository.findLastAssessmentsForEachCoursesByUser, 'user-id');
         });
       });
-
-      it('should call organization repository to get all organizations from the current user', () => {
-
-        // when
-        const promise = profileService.getByUserId('user-id');
-
-        // then
-        return promise.then(() => {
-          sinon.assert.called(organizationRepository.findByUserId);
-          sinon.assert.calledWith(organizationRepository.findByUserId, 'user-id');
-        });
-      });
-
     });
 
   });

@@ -245,14 +245,6 @@ describe('Unit | Service | profile number of finished tests service', function()
               }
             ]
           },
-          'organizations': {
-            'data': [
-              {
-                'type': 'organizations',
-                'id': 1
-              }
-            ]
-          }
         }
       },
       'included': [
@@ -617,16 +609,6 @@ describe('Unit | Service | profile number of finished tests service', function()
             }
           }
         },
-        {
-          'id': 1,
-          'type': 'organizations',
-          'attributes': {
-            'name': 'PixouLoulou',
-            'email': 'flo3pix@pix.fr',
-            'type': 'SUP',
-            'code': 'QLME11'
-          }
-        }
       ]
     };
 

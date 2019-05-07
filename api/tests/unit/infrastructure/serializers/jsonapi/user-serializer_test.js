@@ -34,7 +34,6 @@ describe('Unit | Serializer | JSONAPI | user-serializer', () => {
         pixCertifTermsOfServiceAccepted: false,
         password: '',
         boardOrganizationId: 123,
-        organizations: [],
       });
 
       // when
@@ -79,9 +78,6 @@ describe('Unit | Serializer | JSONAPI | user-serializer', () => {
               links: {
                 related: '/api/users/234567/campaign-participations'
               }
-            },
-            organizations: {
-              data: []
             },
           }
         }

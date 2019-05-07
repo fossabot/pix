@@ -9,7 +9,7 @@ module.exports = {
         'firstName', 'lastName', 'email', 'cgu', 'pixOrgaTermsOfServiceAccepted',
         'pixCertifTermsOfServiceAccepted', 'usesProfileV2', 'memberships',
         'certificationCenterMemberships', 'pixScore', 'scorecards',
-        'campaignParticipations', 'organizations', 'boardOrganizationId',
+        'campaignParticipations', 'boardOrganizationId',
       ],
       memberships: {
         ref: 'id',
@@ -55,10 +55,6 @@ module.exports = {
             return `/api/users/${parent.id}/campaign-participations`;
           }
         }
-      },
-      organizations: {
-        ref: 'id',
-        attributes: ['name', 'type', 'code', 'logoUrl'],
       },
       meta,
     }).serialize(users);
