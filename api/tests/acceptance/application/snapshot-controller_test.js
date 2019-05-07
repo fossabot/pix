@@ -69,13 +69,13 @@ describe('Acceptance | Controller | snapshot-controller', () => {
   };
 
   beforeEach(() => {
-    return knex('users').insert(inserted_user).returning('id')
+    return knex('organizations').insert(inserted_organization).returning('id')
       .then(([id]) => {
-        userId = id;
-        inserted_organization.userId = id;
+        organizationId = id;
+        inserted_user.boardOrganizationId = id;
       })
-      .then(() => knex('organizations').insert(inserted_organization).returning('id'))
-      .then(([id]) => organizationId = id);
+      .then(() => knex('users').insert(inserted_user).returning('id'))
+      .then(([id]) => userId = id);
   });
 
   afterEach(() => {

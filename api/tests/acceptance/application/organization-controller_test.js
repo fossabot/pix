@@ -5,23 +5,23 @@ const settings = require('../../../lib/settings');
 const areaRawAirTableFixture = require('../../tooling/fixtures/infrastructure/areaRawAirTableFixture');
 const _ = require('lodash');
 
-function _insertOrganization(userId) {
+function _insertOrganization() {
   const organizationRaw = {
     name: 'The name of the organization',
     type: 'SUP',
     code: 'AAA111',
-    userId
   };
 
   return knex('organizations').insert(organizationRaw).returning('id');
 }
 
-function _insertUser() {
+function _insertUser({ boardOrganizationId } = {}) {
   const userRaw = {
     firstName: 'john',
     lastName: 'Doe',
     email: 'john.Doe@internet.fr',
-    password: 'Pix2017!'
+    password: 'Pix2017!',
+    boardOrganizationId,
   };
 
   return knex('users').insert(userRaw).returning('id');
@@ -290,10 +290,10 @@ describe('Acceptance | Application | organization-controller', () => {
     };
 
     beforeEach(() => {
-      return _insertUser()
+      return _insertOrganization()
+        .then(([id]) => _insertUser({ boardOrganizationId: id }))
         .then(([id]) => userId = id)
-        .then(() => options.headers.authorization = generateValidRequestAuhorizationHeader(userId))
-        .then(() => _insertOrganization(userId));
+        .then(() => options.headers.authorization = generateValidRequestAuhorizationHeader(userId));
     });
 
     afterEach(() => {
@@ -346,11 +346,11 @@ describe('Acceptance | Application | organization-controller', () => {
     let userId;
 
     beforeEach(() => {
-      return _insertUser()
+      return _insertOrganization()
+        .then(([id]) => organizationId = id)
+        .then(() => _insertUser({ boardOrganizationId: organizationId }))
         .then(([id]) => userId = id)
         .then(() => userToken = _createToken(userId))
-        .then(() => _insertOrganization(userId))
-        .then(([id]) => organizationId = id)
         .then(() => _insertSnapshot(organizationId, userId));
     });
 
