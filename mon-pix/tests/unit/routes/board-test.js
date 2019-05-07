@@ -47,7 +47,7 @@ describe('Unit | Route | board', function() {
 
     beforeEach(function() {
       this.register('service:currentUser', Service.extend({
-        user: { isOrganization: false, organizations: [] }
+        user: { isOrganization: false }
       }));
       this.inject.service('currentUser', { as: 'currentUser' });
 
