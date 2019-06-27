@@ -1,3 +1,5 @@
+import { click, fillIn, visit } from '@ember/test-helpers';
+
 export async function authenticateAsSimpleUser() {
   await visit('/connexion');
   await fillIn('#email', 'jane@acme.com');

@@ -1,25 +1,18 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  it
-} from 'mocha';
+import { click, fillIn, currentURL, find } from '@ember/test-helpers';
+import { beforeEach, describe, it } from 'mocha';
 import { expect } from 'chai';
 import { authenticateAsPrescriber, authenticateAsSimpleUser } from '../helpers/testing';
-import startApp from '../helpers/start-app';
-import destroyApp from '../helpers/destroy-app';
+import visitWithAbortedTransition from '../helpers/visit';
 import defaultScenario from '../../mirage/scenarios/default';
+import { setupApplicationTest } from 'ember-mocha';
+import { setupMirage } from 'ember-cli-mirage/test-support';
 
 describe('Acceptance | Profil v2 | Afficher profil v2', function() {
-  let application;
+  setupApplicationTest();
+  setupMirage();
 
   beforeEach(function() {
-    application = startApp();
-    defaultScenario(server);
-  });
-
-  afterEach(function() {
-    destroyApp(application);
+    defaultScenario(this.server);
   });
 
   describe('Authenticated cases as simple user', function() {
@@ -29,7 +22,7 @@ describe('Acceptance | Profil v2 | Afficher profil v2', function() {
 
     it('can visit /profilv2', async function() {
       // when
-      await visit('/profilv2');
+      await visitWithAbortedTransition('/profilv2');
 
       // then
       expect(currentURL()).to.equal('/profilv2');
@@ -37,7 +30,7 @@ describe('Acceptance | Profil v2 | Afficher profil v2', function() {
 
     it('should redirect to /compte', async function() {
       // given
-      await visit('/profilv2');
+      await visitWithAbortedTransition('/profilv2');
 
       // when
       await click('.rounded-panel__link');
@@ -48,7 +41,7 @@ describe('Acceptance | Profil v2 | Afficher profil v2', function() {
 
     it('should contains references to pix.fr/actualites/votre-profil-evolue', async function() {
       // when
-      await visit('/profilv2');
+      await visitWithAbortedTransition('/profilv2');
 
       // then
       expect(document.querySelector('.profilv2-panel-header-information > .link'))
@@ -59,35 +52,47 @@ describe('Acceptance | Profil v2 | Afficher profil v2', function() {
     });
 
     it('should display pixscore', async function() {
-      await visit('/profilv2');
+      await visitWithAbortedTransition('/profilv2');
 
       // then
-      expect(find('.hexagon-score-content__pix-score').text()).to.contains('196');
+      expect(find('.hexagon-score-content__pix-score').textContent).to.contains('196');
     });
 
     it('should display first competence card of first area', async function() {
       // when
-      await visit('/profilv2');
+      await visitWithAbortedTransition('/profilv2');
 
       // then
-      expect(find('.rounded-panel-body__areas:first-child .rounded-panel-body__competence-card:first-child .competence-card__area-name').text()).to.equal('Information et données');
-      expect(find('.rounded-panel-body__areas:first-child .rounded-panel-body__competence-card:first-child .competence-card__competence-name').text()).to.equal('Compétence C1');
-      expect(find('.rounded-panel-body__areas:first-child .rounded-panel-body__competence-card:first-child .score-value').text()).to.equal('2');
+      expect(find(
+        '.rounded-panel-body__areas:first-child .rounded-panel-body__competence-card:first-child .competence-card__area-name'
+      ).textContent).to.equal('Information et données');
+      expect(find(
+        '.rounded-panel-body__areas:first-child .rounded-panel-body__competence-card:first-child .competence-card__competence-name'
+      ).textContent).to.equal('Compétence C1');
+      expect(find(
+        '.rounded-panel-body__areas:first-child .rounded-panel-body__competence-card:first-child .score-value'
+      ).textContent).to.equal('2');
     });
 
     it('should display second competence card of first area', async function() {
       // when
-      await visit('/profilv2');
+      await visitWithAbortedTransition('/profilv2');
 
       // then
-      expect(find('.rounded-panel-body__areas:first-child .rounded-panel-body__competence-card:nth-child(2) .competence-card__area-name').text()).to.equal('Information et données');
-      expect(find('.rounded-panel-body__areas:first-child .rounded-panel-body__competence-card:nth-child(2) .competence-card__competence-name').text()).to.equal('Compétence C2');
-      expect(find('.rounded-panel-body__areas:first-child .rounded-panel-body__competence-card:nth-child(2) .score-value').text()).to.equal('4');
+      expect(find(
+        '.rounded-panel-body__areas:first-child .rounded-panel-body__competence-card:nth-child(2) .competence-card__area-name'
+      ).textContent).to.equal('Information et données');
+      expect(find(
+        '.rounded-panel-body__areas:first-child .rounded-panel-body__competence-card:nth-child(2) .competence-card__competence-name'
+      ).textContent).to.equal('Compétence C2');
+      expect(find(
+        '.rounded-panel-body__areas:first-child .rounded-panel-body__competence-card:nth-child(2) .score-value'
+      ).textContent).to.equal('4');
     });
 
     it('should link to competence-details page on click on level circle', async function() {
       // given
-      await visit('/profilv2');
+      await visitWithAbortedTransition('/profilv2');
 
       // when
       await click('.rounded-panel-body__areas:first-child .rounded-panel-body__competence-card:nth-child(2) .competence-card__link');
@@ -98,24 +103,30 @@ describe('Acceptance | Profil v2 | Afficher profil v2', function() {
 
     it('should display first competence card of second area', async function() {
       // when
-      await visit('/profilv2');
+      await visitWithAbortedTransition('/profilv2');
 
       // then
-      expect(find('.rounded-panel-body__areas:nth-child(2) .rounded-panel-body__competence-card:first-child .competence-card__area-name').text()).to.equal('Communication et collaboration');
-      expect(find('.rounded-panel-body__areas:nth-child(2) .rounded-panel-body__competence-card:first-child .competence-card__competence-name').text()).to.equal('Compétence C3');
-      expect(find('.rounded-panel-body__areas:nth-child(2) .rounded-panel-body__competence-card:first-child .score-value').text()).to.equal('3');
+      expect(find(
+        '.rounded-panel-body__areas:nth-child(2) .rounded-panel-body__competence-card:first-child .competence-card__area-name'
+      ).textContent).to.equal('Communication et collaboration');
+      expect(find(
+        '.rounded-panel-body__areas:nth-child(2) .rounded-panel-body__competence-card:first-child .competence-card__competence-name'
+      ).textContent).to.equal('Compétence C3');
+      expect(find(
+        '.rounded-panel-body__areas:nth-child(2) .rounded-panel-body__competence-card:first-child .score-value'
+      ).textContent).to.equal('3');
     });
 
     context('when user has not completed the campaign', () => {
 
       it('should display a resume campagin banner for a campaign with no title', async function() {
         // given
-        server.create('assessment', {
+        this.server.create('assessment', {
           id: 2,
           type: 'SMART_PLACEMENT',
           state: 'started',
         });
-        server.create('campaign-participation', {
+        this.server.create('campaign-participation', {
           id: 1,
           isShared: false,
           campaignId: 1,
@@ -124,22 +135,22 @@ describe('Acceptance | Profil v2 | Afficher profil v2', function() {
         });
 
         // when
-        await visit('/profilv2');
+        await visitWithAbortedTransition('/profilv2');
 
         // then
-        findWithAssert('.resume-campaign-banner__container');
-        expect(find('.resume-campaign-banner__container').text()).to.contain('Vous n\'avez pas terminé votre parcours');
-        expect(find('.resume-campaign-banner__button').text()).to.equal('Reprendre');
+        expect(find('.resume-campaign-banner__container')).to.exist;
+        expect(find('.resume-campaign-banner__container').textContent).to.contain('Vous n\'avez pas terminé votre parcours');
+        expect(find('.resume-campaign-banner__button').textContent).to.equal('Reprendre');
       });
 
       it('should display a resume campaign banner for a campaign with a campaign with a title', async function() {
         // given
-        server.create('assessment', {
+        this.server.create('assessment', {
           id: 2,
           type: 'SMART_PLACEMENT',
           state: 'started',
         });
-        server.create('campaign-participation', {
+        this.server.create('campaign-participation', {
           id: 1,
           isShared: false,
           campaignId: 3,
@@ -148,12 +159,12 @@ describe('Acceptance | Profil v2 | Afficher profil v2', function() {
         });
 
         // when
-        await visit('/profilv2');
+        await visitWithAbortedTransition('/profilv2');
 
         // then
-        findWithAssert('.resume-campaign-banner__container');
-        expect(find('.resume-campaign-banner__container').text()).to.contain('Vous n\'avez pas terminé le parcours "Le Titre de la campagne"');
-        expect(find('.resume-campaign-banner__button').text()).to.equal('Reprendre');
+        expect(find('.resume-campaign-banner__container')).to.exist;
+        expect(find('.resume-campaign-banner__container').textContent).to.contain('Vous n\'avez pas terminé le parcours "Le Titre de la campagne"');
+        expect(find('.resume-campaign-banner__button').textContent).to.equal('Reprendre');
       });
     });
 
@@ -161,12 +172,12 @@ describe('Acceptance | Profil v2 | Afficher profil v2', function() {
 
       it('should display a resume campaign banner for a campaign with no title', async function() {
         // given
-        server.create('assessment', {
+        this.server.create('assessment', {
           id: 2,
           type: 'SMART_PLACEMENT',
           state: 'completed',
         });
-        server.create('campaign-participation', {
+        this.server.create('campaign-participation', {
           id: 1,
           isShared: false,
           campaignId: 1,
@@ -175,22 +186,22 @@ describe('Acceptance | Profil v2 | Afficher profil v2', function() {
         });
 
         // when
-        await visit('/profilv2');
+        await visitWithAbortedTransition('/profilv2');
 
         // then
-        findWithAssert('.resume-campaign-banner__container');
-        expect(find('.resume-campaign-banner__container').text()).to.contain('Parcours terminé ! Envoyez vos résultats.');
-        expect(find('.resume-campaign-banner__button').text()).to.equal('Continuer');
+        expect(find('.resume-campaign-banner__container')).to.exist;
+        expect(find('.resume-campaign-banner__container').textContent).to.contain('Parcours terminé ! Envoyez vos résultats.');
+        expect(find('.resume-campaign-banner__button').textContent).to.equal('Continuer');
       });
 
       it('should display a resume campaign banner for a campaign with a campaign with a title', async function() {
         // given
-        server.create('assessment', {
+        this.server.create('assessment', {
           id: 2,
           type: 'SMART_PLACEMENT',
           state: 'completed',
         });
-        server.create('campaign-participation', {
+        this.server.create('campaign-participation', {
           id: 1,
           isShared: false,
           campaignId: 3,
@@ -199,12 +210,12 @@ describe('Acceptance | Profil v2 | Afficher profil v2', function() {
         });
 
         // when
-        await visit('/profilv2');
+        await visitWithAbortedTransition('/profilv2');
 
         // then
-        findWithAssert('.resume-campaign-banner__container');
-        expect(find('.resume-campaign-banner__container').text()).to.contain('Parcours "Le Titre de la campagne" terminé ! Envoyez vos résultats.');
-        expect(find('.resume-campaign-banner__button').text()).to.equal('Continuer');
+        expect(find('.resume-campaign-banner__container')).to.exist;
+        expect(find('.resume-campaign-banner__container').textContent).to.contain('Parcours "Le Titre de la campagne" terminé ! Envoyez vos résultats.');
+        expect(find('.resume-campaign-banner__button').textContent).to.equal('Continuer');
       });
     });
   });
@@ -216,7 +227,7 @@ describe('Acceptance | Profil v2 | Afficher profil v2', function() {
 
     it('can visit /profilv2', async function() {
       // when
-      await visit('/profilv2');
+      await visitWithAbortedTransition('/profilv2');
 
       // then
       expect(currentURL()).to.equal('/board');
@@ -226,13 +237,13 @@ describe('Acceptance | Profil v2 | Afficher profil v2', function() {
   describe('Not authenticated cases', function() {
     it('should redirect to home, when user is not authenticated', async function() {
       // when
-      await visit('/profilv2');
+      await visitWithAbortedTransition('/profilv2');
       expect(currentURL()).to.equal('/connexion');
     });
 
     it('should stay in /connexion, when authentication failed', async function() {
       // given
-      await visit('/connexion');
+      await visitWithAbortedTransition('/connexion');
       await fillIn('#email', 'anyone@pix.world');
       await fillIn('#password', 'Pix20!!');
 

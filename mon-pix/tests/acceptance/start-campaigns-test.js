@@ -1,9 +1,11 @@
-import { afterEach, beforeEach, describe, it } from 'mocha';
+import { click, fillIn, currentURL, find } from '@ember/test-helpers';
+import { beforeEach, describe, it } from 'mocha';
 import { expect } from 'chai';
-import startApp from '../helpers/start-app';
-import destroyApp from '../helpers/destroy-app';
 import { authenticateAsSimpleUser, startCampaignByCode } from '../helpers/testing';
+import visitWithAbortedTransition from '../helpers/visit';
 import defaultScenario from '../../mirage/scenarios/default';
+import { setupApplicationTest } from 'ember-mocha';
+import { setupMirage } from 'ember-cli-mirage/test-support';
 
 function _buildCampaignParticipation(schema) {
   const assessment = schema.assessments.create({});
@@ -11,16 +13,11 @@ function _buildCampaignParticipation(schema) {
 }
 
 describe('Acceptance | Campaigns | Start Campaigns', function() {
-
-  let application;
+  setupApplicationTest();
+  setupMirage();
 
   beforeEach(function() {
-    application = startApp();
-    defaultScenario(server);
-  });
-
-  afterEach(function() {
-    destroyApp(application);
+    defaultScenario(this.server);
   });
 
   describe('Start a campaigns course', function() {
@@ -33,27 +30,23 @@ describe('Acceptance | Campaigns | Start Campaigns', function() {
         });
         it('should redirect to signin page', async function() {
           // then
-          return andThen(() => {
-            expect(currentURL()).to.equal('/inscription');
-          });
+          expect(currentURL()).to.equal('/inscription');
         });
       });
 
       context('When the user has not seen the landing page', function() {
         it('should redirect to landing page', async function() {
           // when
-          await visit('/campagnes/AZERTY1');
+          await visitWithAbortedTransition('/campagnes/AZERTY1');
 
           // then
-          return andThen(() => {
-            expect(currentURL()).to.equal('/campagnes/AZERTY1/presentation');
-          });
+          expect(currentURL()).to.equal('/campagnes/AZERTY1/presentation');
         });
 
         context('When campaign has custom text for the landing page', function() {
           it('should show the custom text on the landing page', async function() {
             // given
-            server.create('campaign', {
+            this.server.create('campaign', {
               id: '3',
               name: 'Campagne 3',
               code: 'AZERTY3',
@@ -61,25 +54,21 @@ describe('Acceptance | Campaigns | Start Campaigns', function() {
             });
 
             // when
-            await visit('/campagnes/AZERTY3');
+            await visitWithAbortedTransition('/campagnes/AZERTY3');
 
             // then
-            return andThen(() => {
-              expect(find('.campaign-landing-page__start__custom-text')).to.have.lengthOf(1);
-              expect(find('.campaign-landing-page__start__custom-text').text()).to.contains('Texte personnalisé pour la Campagne 3');
-            });
+            expect(find('.campaign-landing-page__start__custom-text')).to.exist;
+            expect(find('.campaign-landing-page__start__custom-text').textContent).to.contains('Texte personnalisé pour la Campagne 3');
           });
         });
 
         context('When campaign does not have custom text for the landing page', function() {
           it('should show only the defaulted text on the landing page', async function() {
             // when
-            await visit('/campagnes/AZERTY1');
+            await visitWithAbortedTransition('/campagnes/AZERTY1');
 
             // then
-            return andThen(() => {
-              expect(find('.campaign-landing-page__start__custom-text')).to.have.lengthOf(0);
-            });
+            expect(find('.campaign-landing-page__start__custom-text')).to.not.exist;
           });
         });
 
@@ -98,20 +87,16 @@ describe('Acceptance | Campaigns | Start Campaigns', function() {
 
         it('should redirect to fill-in-id-pix page after signup', async function() {
           // then
-          return andThen(() => {
-            expect(currentURL()).to.contains('/campagnes/AZERTY1/identifiant');
-          });
+          expect(currentURL()).to.contains('/campagnes/AZERTY1/identifiant');
         });
 
         it('should redirect to assessment after completion of external id', async function() {
           // when
-          fillIn('#id-pix-label', 'monmail@truc.fr');
+          await fillIn('#id-pix-label', 'monmail@truc.fr');
           await click('.button');
 
           // then
-          return andThen(() => {
-            expect(currentURL()).to.contains('/didacticiel');
-          });
+          expect(currentURL()).to.contains('/didacticiel');
         });
       });
 
@@ -128,9 +113,7 @@ describe('Acceptance | Campaigns | Start Campaigns', function() {
 
         it('should redirect to assessment after signup', async function() {
           // then
-          return andThen(() => {
-            expect(currentURL()).to.contains('/didacticiel');
-          });
+          expect(currentURL()).to.contains('/didacticiel');
         });
       });
 
@@ -143,13 +126,10 @@ describe('Acceptance | Campaigns | Start Campaigns', function() {
 
       it('should redirect to landing page', async function() {
         // when
-        await visit('/campagnes/AZERTY1');
-        // then
-        return andThen(() => {
-          expect(currentURL()).to.equal('/campagnes/AZERTY1/presentation');
-          expect(find('.campaign-landing-page__start-button').text().trim()).to.equal('Je commence');
-          findWithAssert('.campaign-landing-page__logo');
-        });
+        await visitWithAbortedTransition('/campagnes/AZERTY1');
+        expect(currentURL()).to.equal('/campagnes/AZERTY1/presentation');
+        expect(find('.campaign-landing-page__start-button').textContent.trim()).to.equal('Je commence');
+        find('.campaign-landing-page__logo');
       });
 
       context('When campaign have external id', function() {
@@ -158,17 +138,14 @@ describe('Acceptance | Campaigns | Start Campaigns', function() {
         });
 
         it('should show the identifiant page after clicking on start button in landing page', async function() {
-          // then
-          return andThen(() => {
-            expect(currentURL()).to.contains('/campagnes/AZERTY1/identifiant');
-          });
+          expect(currentURL()).to.contains('/campagnes/AZERTY1/identifiant');
         });
 
         it('should save the external id when user fill in his id', async function() {
           // given
           const participantExternalId = 'monmail@truc.fr';
           let receivedParticipantExternalId;
-          server.post('/campaign-participations', (schema, request) => {
+          this.server.post('/campaign-participations', (schema, request) => {
             const params = JSON.parse(request.requestBody);
 
             receivedParticipantExternalId = params.data.attributes['participant-external-id'];
@@ -186,18 +163,16 @@ describe('Acceptance | Campaigns | Start Campaigns', function() {
 
         it('should go to the tutorial when the user fill in his id', async function() {
           // when
-          fillIn('#id-pix-label', 'monmail@truc.fr');
+          await fillIn('#id-pix-label', 'monmail@truc.fr');
           await click('.button');
 
           // then
-          return andThen(() => {
-            expect(currentURL()).to.contains('campagnes/AZERTY1/didacticiel');
-          });
+          expect(currentURL()).to.contains('campagnes/AZERTY1/didacticiel');
         });
 
         it('should start the assessment when the user has seen tutorial', async function() {
           // when
-          fillIn('#id-pix-label', 'monmail@truc.fr');
+          await fillIn('#id-pix-label', 'monmail@truc.fr');
           await click('.button');
           await click('.campaign-tutorial__next-page-tutorial');
           await click('.campaign-tutorial__next-page-tutorial');
@@ -205,18 +180,16 @@ describe('Acceptance | Campaigns | Start Campaigns', function() {
           await click('.campaign-tutorial__start-campaign-button');
 
           // then
-          return andThen(() => {
-            expect(currentURL()).to.contains(/assessments/);
-            expect(find('.course-banner__name').text()).to.equal('');
-            findWithAssert('.assessment-challenge__progress-bar');
-          });
+          expect(currentURL()).to.contains(/assessments/);
+          expect(find('.course-banner__name').textContent).to.equal('');
+          expect(find('.assessment-challenge__progress-bar')).to.exist;
         });
       });
 
       context('When campaign does not have external id', function() {
 
         beforeEach(async function() {
-          await visit('/campagnes/AZERTY2');
+          await visitWithAbortedTransition('/campagnes/AZERTY2');
         });
 
         it('should redirect to tutorial after clicking on start button in landing page', async function() {
@@ -224,15 +197,13 @@ describe('Acceptance | Campaigns | Start Campaigns', function() {
           await click('.campaign-landing-page__start-button');
 
           // then
-          return andThen(() => {
-            expect(currentURL()).to.contains('campagnes/AZERTY2/didacticiel');
-          });
+          expect(currentURL()).to.contains('campagnes/AZERTY2/didacticiel');
         });
 
         it('should not save any external id after clicking on start button in landing page', async function() {
           // given
           let receivedParticipantExternalId;
-          server.post('/campaign-participations', (schema, request) => {
+          this.server.post('/campaign-participations', (schema, request) => {
             const params = JSON.parse(request.requestBody);
 
             receivedParticipantExternalId = params.data.attributes['participant-external-id'];
@@ -249,15 +220,13 @@ describe('Acceptance | Campaigns | Start Campaigns', function() {
 
       context('When campaign does not exist', function() {
         beforeEach(async function() {
-          await visit('/campagnes/codefaux');
+          await visitWithAbortedTransition('/campagnes/codefaux');
         });
 
         it('should show an error message', async function() {
           // then
-          return andThen(() => {
-            expect(currentURL()).to.equal('/campagnes/codefaux');
-            expect(find('.pix-panel').text()).to.contains('La campagne demandée n\'existe pas.');
-          });
+          expect(currentURL()).to.equal('/campagnes/codefaux');
+          expect(find('.pix-panel').textContent).to.contains('La campagne demandée n\'existe pas.');
         });
       });
 
