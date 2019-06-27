@@ -29,7 +29,6 @@ describe('Unit | Route | user certifications/get', function() {
   });
 
   it('exists', function() {
-    route = this.owner.lookup('route:user-certifications/get');
     expect(route).to.be.ok;
   });
 
@@ -39,7 +38,7 @@ describe('Unit | Route | user certifications/get', function() {
       // given
       const params = { id: certificationId };
       const retreivedCertification = [EmberObject.create({ id: certificationId })];
-      route.get('store').findRecord.resolves(retreivedCertification);
+      findRecordStub.resolves(retreivedCertification);
 
       // when
       const promise = route.model(params);
@@ -62,7 +61,7 @@ describe('Unit | Route | user certifications/get', function() {
         isPublished: true,
         pixScore: 231
       });
-      route.get('store').findRecord.resolves(retreivedCertification);
+      findRecordStub.resolves(retreivedCertification);
 
       // when
       const promise = route.model(params);
@@ -84,7 +83,7 @@ describe('Unit | Route | user certifications/get', function() {
         isPublished: false,
         pixScore: 231
       });
-      route.get('store').findRecord.resolves(retreivedCertification);
+      findRecordStub.resolves(retreivedCertification);
 
       // when
       const promise = route.model(params);
@@ -107,7 +106,7 @@ describe('Unit | Route | user certifications/get', function() {
         isPublished: true,
         pixScore: 231
       });
-      route.get('store').findRecord.resolves(retreivedCertification);
+      findRecordStub.resolves(retreivedCertification);
 
       // when
       const promise = route.model(params);
