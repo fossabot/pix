@@ -2,6 +2,8 @@ const logger = require('../../infrastructure/logger');
 const tokenService = require('../../domain/services/token-service');
 const checkUserIsAuthenticatedUseCase = require('../../application/usecases/checkUserIsAuthenticated');
 const checkUserHasRolePixMasterUseCase = require('../../application/usecases/checkUserHasRolePixMaster');
+const checkUserIsOwnerInOrganizationUseCase = require('../../application/usecases/checkUserIsOwnerInOrganization');
+
 const JSONAPIError = require('jsonapi-serializer').Error;
 
 function _replyWithAuthenticationError(h) {
@@ -32,48 +34,76 @@ function _replyWithAuthorizationError(h) {
   });
 }
 
-module.exports = {
+function checkUserIsAuthenticated(request, h) {
 
-  checkUserIsAuthenticated(request, h) {
+  const authorizationHeader = request.headers.authorization;
+  const accessToken = tokenService.extractTokenFromAuthChain(authorizationHeader);
 
-    const authorizationHeader = request.headers.authorization;
-    const accessToken = tokenService.extractTokenFromAuthChain(authorizationHeader);
-
-    if (!accessToken) {
-      return _replyWithAuthenticationError(h);
-    }
-
-    return checkUserIsAuthenticatedUseCase.execute(accessToken)
-      .then((authenticatedUser) => {
-        if (authenticatedUser) {
-          return h.authenticated({ credentials: { accessToken, userId: authenticatedUser.user_id } });
-        }
-        return _replyWithAuthenticationError(h);
-      })
-      .catch((err) => {
-        logger.error(err);
-        return _replyWithAuthenticationError(h);
-      });
-  },
-
-  checkUserHasRolePixMaster(request, h) {
-    if (!request.auth.credentials || !request.auth.credentials.userId) {
-      return _replyWithAuthorizationError(h);
-    }
-
-    const userId = request.auth.credentials.userId;
-
-    return checkUserHasRolePixMasterUseCase.execute(userId)
-      .then((hasRolePixMaster) => {
-        if (hasRolePixMaster) {
-          return h.response(true);
-        }
-        return _replyWithAuthorizationError(h);
-      })
-      .catch((err) => {
-        logger.error(err);
-        return _replyWithAuthorizationError(h);
-      });
+  if (!accessToken) {
+    return _replyWithAuthenticationError(h);
   }
 
+  return checkUserIsAuthenticatedUseCase.execute(accessToken)
+    .then((authenticatedUser) => {
+      if (authenticatedUser) {
+        return h.authenticated({ credentials: { accessToken, userId: authenticatedUser.user_id } });
+      }
+      return _replyWithAuthenticationError(h);
+    })
+    .catch((err) => {
+      logger.error(err);
+      return _replyWithAuthenticationError(h);
+    });
+}
+
+function checkUserHasRolePixMaster(request, h) {
+  if (!request.auth.credentials || !request.auth.credentials.userId) {
+    return _replyWithAuthorizationError(h);
+  }
+
+  const userId = request.auth.credentials.userId;
+
+  return checkUserHasRolePixMasterUseCase.execute(userId)
+    .then((hasRolePixMaster) => {
+      if (hasRolePixMaster) {
+        return h.response(true);
+      }
+      return _replyWithAuthorizationError(h);
+    })
+    .catch((err) => {
+      logger.error(err);
+      return _replyWithAuthorizationError(h);
+    });
+}
+
+function checkUserIsOwnerInOrganization(request, h) {
+  if (!request.auth.credentials || !request.auth.credentials.userId) {
+    return _replyWithAuthorizationError(h);
+  }
+
+  const userId = request.auth.credentials.userId;
+  const organizationId = request.params.id;
+
+  return checkUserIsOwnerInOrganizationUseCase.execute(userId, organizationId)
+    .then((isOwnerInOrganization) => {
+      if (isOwnerInOrganization) {
+        return h.response(true);
+      }
+      return _replyWithAuthorizationError(h);
+    })
+    .catch((err) => {
+      logger.error(err);
+      return _replyWithAuthorizationError(h);
+    });
+}
+
+function checkUserIsOwnerInOrganizationOrHasRolePixMaster(request, h) {
+  return checkUserIsOwnerInOrganization(request, h) || checkUserHasRolePixMaster(request, h);
+}
+
+module.exports = {
+  checkUserIsAuthenticated,
+  checkUserHasRolePixMaster,
+  checkUserIsOwnerInOrganization,
+  checkUserIsOwnerInOrganizationOrHasRolePixMaster
 };
