@@ -9,7 +9,7 @@ class Membership {
   constructor({
     id,
     // attributes
-    organizationRole = roles.OWNER,
+    organizationRole = roles.MEMBER,
     // includes
     organization,
     user,
