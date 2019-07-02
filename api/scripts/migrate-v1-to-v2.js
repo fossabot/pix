@@ -4,8 +4,9 @@ const _ = require('lodash');
 const moment = require('moment');
 const PgClient = require('./PgClient');
 const findKnowledgeElementsToAdd = require('./extract-challenge-with-skills.js');
+const cron = require('node-cron');
 
-async function main() {
+async function migration() {
 
   const client = _initialize();
   const challengesWithKnowledgeElementsToAdd = await findKnowledgeElementsToAdd();
@@ -16,7 +17,7 @@ async function main() {
 
   return promiseToCreateKnowledgeElements
     .then(() => _terminate(client))
-    .then(() => process.exit(1));
+    .then(() => listOfUsers.length);
 
 }
 
@@ -30,7 +31,7 @@ function _terminate(client) {
 }
 
 async function _findUser(client) {
-  const usersId = await client.query_and_log(`SELECT id FROM USERS where "isMigratedToV2" = false ORDER BY "createdAt" ASC LIMIT 100;`);
+  const usersId = await client.query_and_log(`SELECT id FROM USERS where "ismigratedtov2" = false ORDER BY "createdAt" ASC LIMIT 2;`);
   return _.map(usersId.rows, 'id');
 }
 
@@ -96,10 +97,8 @@ function _createKnowledgeElementObject(answer, userId, status, skillInformation)
 }
 
 async function _indicateMigrationOk(client, userId) {
-  return client.query_and_log(`UPDATE USERS SET "isMigratedToV2"=true WHERE id = ${userId}`);
+  return client.query_and_log(`UPDATE USERS SET "ismigratedtov2"=true WHERE id = ${userId}`);
 }
-
-
 
 function _createKnowledgeElementObjects(answersForMigration, challengesWithKnowledgeElementsToAdd, userId) {
   return _.map(answersForMigration, (answer) => {
@@ -111,7 +110,10 @@ function _createKnowledgeElementObjects(answersForMigration, challengesWithKnowl
     }
   });
 }
+cron.schedule(process.env.MIGRATION_CRON_TIME, () => {
+  console.log('Starting migration');
 
-if (require.main === module) {
-  main();
-}
+  return migration()
+    .then((numberOfUsersMigrated) => console.log(`Migrated OK for ${numberOfUsersMigrated} users`))
+    .catch(console.log);
+});
